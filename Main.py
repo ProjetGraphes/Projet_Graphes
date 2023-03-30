@@ -2,6 +2,7 @@ import csv
 from dotenv import load_dotenv
 import os
 import requests
+import mysql.connector
 
 NOMBRE_STREAMERS = 993
 LIEN_STREAMERS = 1000
@@ -11,6 +12,13 @@ headers = {
     'Client-ID': os.getenv('CLIENT_ID'),
     'Authorization': 'Bearer ' + os.getenv('CLIENT_SECRET')
 }
+
+mydb = mysql.connector.connect(
+  host=os.getenv('DB_HOST'),
+  user=os.getenv('DB_USER'),
+  password=os.getenv('DB_PASSWORD'),
+  database=os.getenv('DB_NAME')
+)
 
 def affiche_matrice(matrice):
     for i in range(len(matrice)):
@@ -45,3 +53,12 @@ def lien_streamer(id_a, id_b):
 
 '''matrice = init_matrice()
 affiche_matrice(matrice)'''
+data_json = requests.get("https://api.twitch.tv/helix/users/follows?to_id=55828551", headers=headers)
+data_dict = data_json.json()
+
+
+print(data_dict)
+'''tab1 = [1, 2, 3, 4, 5]
+tab2 = [3, 4, 5, 6, 7]
+
+print(set(tab1))'''

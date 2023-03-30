@@ -14,7 +14,7 @@ headers = {
     'Authorization': 'Bearer ' + os.getenv('CLIENT_SECRET')
 }
 
-mydb = mysql.connector.connect(
+db = mysql.connector.connect(
   host=os.getenv('DB_HOST'),
   user=os.getenv('DB_USER'),
   password=os.getenv('DB_PASSWORD'),
@@ -29,7 +29,7 @@ with open('CSV_Streamers_BRUT.csv', mode='r', encoding='utf-8') as csv_file:
     
     #Remplissage du tableau temporaire
     for ligne in reader:
-        nouveau_csv[int(ligne['Ranking'])-1] = {'Channel': ligne['Channel'], 'Followers': ligne['Followers']}
+        nouveau_csv[int(ligne['Ranking'])-1] = {'Channel': ligne['Channel']}
         
     while cpt_nombre_streamers < NOMBRE_STREAMERS :
         string_url = ""
@@ -68,17 +68,13 @@ with open('CSV_Streamers_BRUT.csv', mode='r', encoding='utf-8') as csv_file:
             cpt_id = cpt_id + 1
             cpt_ajout_id = cpt_ajout_id + 1
 
-#Suppression des streamers à supprimer (pas de retour d'ID car leur compte n'est plus disponible)
-for i in range(len(nouveau_csv)):
-    if(len(nouveau_csv[i]) != 3):
-        nouveau_csv.pop(i)
+cursor = db.cursor()
+#Ajout des données dans la base (sauf pour les streamers à supprimer (pas de retour d'ID car leur compte n'est plus disponible))
+for i in nouveau_csv:
+    if(len(nouveau_csv[i]) == 2):
+        cursor.execute("INSERT INTO streamers (streamers_login, streamers_twitch_id) VALUES (%s, %s)", [nouveau_csv[i]['Channel'], nouveau_csv[i]['ID']])
 
+db.commit()
 
-
-with open('CSV_Streamers_2.csv', mode='w', newline='', encoding='utf-8') as csv_file:
-    fieldnames = ['Channel', 'Followers', 'ID']
-    writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
-
-    writer.writeheader()
-    for i in nouveau_csv:
-        writer.writerow(nouveau_csv[i])
+cursor.close()
+db.close()

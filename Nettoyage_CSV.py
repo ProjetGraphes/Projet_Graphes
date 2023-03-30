@@ -3,6 +3,7 @@ import requests
 import csv
 from dotenv import load_dotenv
 import os
+import mysql.connector
 
 LIMITE_URL = 100
 NOMBRE_STREAMERS = 1000
@@ -12,6 +13,13 @@ headers = {
     'Client-ID': os.getenv('CLIENT_ID'),
     'Authorization': 'Bearer ' + os.getenv('CLIENT_SECRET')
 }
+
+mydb = mysql.connector.connect(
+  host=os.getenv('DB_HOST'),
+  user=os.getenv('DB_USER'),
+  password=os.getenv('DB_PASSWORD'),
+  database=os.getenv('DB_NAME')
+)
 
 with open('CSV_Streamers_BRUT.csv', mode='r', encoding='utf-8') as csv_file:
     reader = csv.DictReader(csv_file, delimiter=',')
@@ -64,6 +72,8 @@ with open('CSV_Streamers_BRUT.csv', mode='r', encoding='utf-8') as csv_file:
 for i in range(len(nouveau_csv)):
     if(len(nouveau_csv[i]) != 3):
         nouveau_csv.pop(i)
+
+
 
 with open('CSV_Streamers_2.csv', mode='w', newline='', encoding='utf-8') as csv_file:
     fieldnames = ['Channel', 'Followers', 'ID']

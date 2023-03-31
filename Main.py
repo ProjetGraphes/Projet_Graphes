@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 #NIVEAU_CONFIANCE : Pour un niveau de confiance de 95 %
 #PROPORTION_INTERET : Estimation conservatrice de 0,5 (car on ne sait pas si deux streamers ont publics similaires)
 #TAILLE_ECHANTILLON : Formule de Cochran
-NOMBRE_STREAMERS = 50
+NOMBRE_STREAMERS = 100
 SEUIL_ARETE = 10000
 NIVEAU_CONFIANCE = 1.96
 MARGE_ERREUR = 0.01
@@ -33,7 +33,7 @@ def init_matrice():
                     ligne.append([infos_streamer['Channel'], int(infos_streamer['Followers'])])
                 else:
                     ligne.append(0)
-            matrice.append(ligne)
+            matrice.append(ligne)        
     
     #Initialisation des followers en communs entre deux streamers
     for i in range(1, len(matrice)):
@@ -65,7 +65,7 @@ def charger_graphe(matrice):
     tailles = []
     for i in range(len(matrice)):
         G.add_node(matrice[i][i][0])
-        tailles.append(matrice[i][i][1]/10000)
+        tailles.append(matrice[i][i][1]/50000)
 
     #Initialisation des arêtes
     for i in range(1, len(matrice)):
@@ -92,7 +92,7 @@ G = tab_aux[0]
 tailles = tab_aux[1]
 color_map = generation_couleur_aleatoire(G)          
 
-nx.draw(G, with_labels=True, node_size=tailles, node_color=color_map, edge_color='red', width=0.5)
-
+nx.draw(G, with_labels=True, font_size=5, font_color='white', node_size=tailles, node_color=color_map, edge_color='red' ,width=0.1)
+plt.rcParams['savefig.facecolor'] = '#000000' # Set background color to black
 plt.savefig('Graphes.png', dpi=300)
 plt.show()

@@ -2,11 +2,14 @@ import csv
 import random
 import networkx as nx
 import matplotlib.pyplot as plt
+import tkinter as tk
+
+
 
 #NIVEAU_CONFIANCE : Pour un niveau de confiance de 95 %
 #PROPORTION_INTERET : Estimation conservatrice de 0,5 (car on ne sait pas si deux streamers ont publics similaires)
 #TAILLE_ECHANTILLON : Formule de Cochran
-NOMBRE_STREAMERS = 100
+NOMBRE_STREAMERS = 10
 SEUIL_ARETE = 7000
 AJUSTE_TAILLE_SOMMET = 50000
 
@@ -94,12 +97,40 @@ def detecter_communautes(G):
 
     return couleurs_sommets
 
+
+
+def display_node_info(node):
+    neighbors = list(G.neighbors(node))
+    print("------------------")
+    print(f"NOM DU STREAMER: {node}")
+    print(f"NOMBRE DE VOISIN: {len(neighbors)}")
+    print("LISTE DE VOISIN: ", neighbors)
+    print("------------------")
+
+
+def on_node_click(event):
+    if (event.button == 3 or event.button == 1):
+        x, y = event.xdata, event.ydata
+        node = None
+        min_dist = float("inf")
+        for n in G.nodes:
+            dist = (pos[n][0] - x)**2 + (pos[n][1] - y)**2
+            if dist < min_dist:
+                node = n
+                min_dist = dist
+        display_node_info(node)
+
 tab_aux = charger_graphe()
 G = tab_aux['G']
 tailles_sommets = tab_aux['tailles_sommets']
 couleurs_sommets = detecter_communautes(G)
 
+pos = nx.spring_layout(G)
 nx.draw(G, with_labels=True, font_size=5, font_color='white', node_color=couleurs_sommets, node_size=tailles_sommets, edge_color='red', width=0.1)
+nx.set_node_attributes(G, pos, 'pos')
+
 plt.rcParams['savefig.facecolor'] = '#000000'
 plt.savefig('Graphe.png', dpi=300)
+plt.gcf().canvas.mpl_connect('button_press_event', on_node_click)
 plt.show()
+

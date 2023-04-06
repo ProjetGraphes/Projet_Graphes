@@ -126,7 +126,7 @@ tailles_sommets = tab_aux['tailles_sommets']
 couleurs_sommets = detecter_communautes(G)
 
 pos = nx.spring_layout(G)
-nx.draw(G, with_labels=True, font_size=5, font_color='white', node_color=couleurs_sommets, node_size=tailles_sommets, edge_color='red', width=0.1)
+nx.draw(G, with_labels=True, pos=pos, font_size=5, font_color='white', node_color=couleurs_sommets, node_size=tailles_sommets, edge_color='red', width=0.1)
 nx.set_node_attributes(G, pos, 'pos')
 
 plt.rcParams['savefig.facecolor'] = '#000000'
